@@ -1,11 +1,64 @@
 import Link from 'next/link';
-import { Badge } from '@/components/ui/Badge';
+import { clsx } from 'clsx';
+import { AlertTriangle, CheckCircle2, UploadCloud } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { getDB } from '@/lib/db';
 import { getTodayPriceStatus } from '@/lib/priceRecords';
+import type { PriceRecordStatusCounts } from '@/types';
 
 const linkButtonClass =
   'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors text-sm px-4 py-2 bg-[#0a0a0a] hover:bg-[#333] text-white';
+
+function StatusIcon({ tone, children }: { tone: 'neutral' | 'warning' | 'success'; children: React.ReactNode }) {
+  return (
+    <div
+      className={clsx(
+        'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
+        tone === 'neutral' && 'bg-gray-100 text-gray-500',
+        tone === 'warning' && 'bg-amber-50 text-amber-600',
+        tone === 'success' && 'bg-green-50 text-green-600',
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+function StatTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: 'neutral' | 'danger' | 'success';
+}) {
+  return (
+    <div className="rounded-md bg-gray-50 px-3 py-2.5">
+      <div className="text-[11px] font-medium uppercase tracking-wide text-[#999]">{label}</div>
+      <div
+        className={clsx(
+          'font-mono text-2xl font-semibold tabular-nums',
+          tone === 'danger' && (value > 0 ? 'text-red-600' : 'text-[#0a0a0a]'),
+          tone === 'success' && 'text-green-700',
+          tone === 'neutral' && 'text-[#0a0a0a]',
+        )}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function CountTiles({ counts }: { counts: PriceRecordStatusCounts }) {
+  return (
+    <div className="grid grid-cols-3 gap-3 border-t border-gray-100 pt-4">
+      <StatTile label="정상" value={counts.pending} tone="neutral" />
+      <StatTile label="이상" value={counts.issue} tone="danger" />
+      <StatTile label="등록완료" value={counts.registered} tone="success" />
+    </div>
+  );
+}
 
 export default function HomePage() {
   const db = getDB();
@@ -20,28 +73,36 @@ export default function HomePage() {
 
       <Card>
         {today.status === 'not_uploaded' && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Badge color="gray">업로드 전</Badge>
-              <span className="text-sm text-[#333]">오늘 기준가 파일이 아직 업로드되지 않았습니다.</span>
+          <div className="flex items-start gap-4">
+            <StatusIcon tone="neutral">
+              <UploadCloud className="h-5 w-5" />
+            </StatusIcon>
+            <div className="flex-1 space-y-3">
+              <div>
+                <div className="text-base font-semibold text-[#0a0a0a]">
+                  오늘 기준가 파일이 아직 업로드되지 않았습니다
+                </div>
+                <div className="mt-0.5 text-sm text-[#999]">업로드 후 이상 여부를 확인하고 등록을 진행하세요.</div>
+              </div>
+              <Link href="/price-uploads" className={linkButtonClass}>
+                업로드하러 가기
+              </Link>
             </div>
-            <Link href="/price-uploads" className={linkButtonClass}>
-              업로드하러 가기
-            </Link>
           </div>
         )}
 
         {today.status === 'needs_review' && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Badge color="yellow">확인 필요</Badge>
-              <span className="text-sm text-[#333]">
-                오늘 업로드된 파일에 확인이나 등록이 남은 항목이 있습니다.
-              </span>
+          <div className="space-y-5">
+            <div className="flex items-start gap-4">
+              <StatusIcon tone="warning">
+                <AlertTriangle className="h-5 w-5" />
+              </StatusIcon>
+              <div>
+                <div className="text-base font-semibold text-[#0a0a0a]">확인이나 등록이 남은 항목이 있습니다</div>
+                <div className="mt-0.5 text-sm text-[#999]">이상 건을 확인한 뒤 등록을 진행하세요.</div>
+              </div>
             </div>
-            <div className="text-sm text-[#333]">
-              정상 {today.counts.pending}건 · 이상 {today.counts.issue}건 · 등록완료 {today.counts.registered}건
-            </div>
+            <CountTiles counts={today.counts} />
             <Link href={`/price-uploads/${today.upload.id}`} className={linkButtonClass}>
               확인하러 가기
             </Link>
@@ -49,14 +110,14 @@ export default function HomePage() {
         )}
 
         {today.status === 'completed' && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Badge color="green">완료</Badge>
-              <span className="text-sm text-[#333]">오늘 기준가 등록이 모두 완료되었습니다.</span>
+          <div className="space-y-5">
+            <div className="flex items-start gap-4">
+              <StatusIcon tone="success">
+                <CheckCircle2 className="h-5 w-5" />
+              </StatusIcon>
+              <div className="text-base font-semibold text-[#0a0a0a]">오늘 기준가 등록이 모두 완료되었습니다</div>
             </div>
-            <div className="text-sm text-[#333]">
-              정상 {today.counts.pending}건 · 이상 {today.counts.issue}건 · 등록완료 {today.counts.registered}건
-            </div>
+            <CountTiles counts={today.counts} />
           </div>
         )}
       </Card>
