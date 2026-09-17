@@ -88,7 +88,7 @@ export function PriceUploadDetailView({
                 <th className="py-2 pr-3 font-medium">일자</th>
                 <th className="py-2 pr-3 font-medium">펀드명</th>
                 <th className="py-2 pr-3 font-medium">펀드코드</th>
-                <th className="py-2 pr-3 font-medium">거래기준가</th>
+                <th className="py-2 pr-3 font-medium text-right">거래기준가</th>
                 <th className="py-2 pr-3 font-medium">상태</th>
                 <th className="py-2 pr-3 font-medium"></th>
               </tr>
@@ -99,10 +99,10 @@ export function PriceUploadDetailView({
                 return (
                   <Fragment key={record.id}>
                     <tr className="border-b border-gray-100 align-top">
-                      <td className="py-2 pr-3">{record.price_date}</td>
+                      <td className="py-2 pr-3 font-mono tabular-nums">{record.price_date}</td>
                       <td className="py-2 pr-3">{record.fnd_nm || '-'}</td>
-                      <td className="py-2 pr-3">{record.fnd_cod || '-'}</td>
-                      <td className="py-2 pr-3">{record.tr_bpr}</td>
+                      <td className="py-2 pr-3 font-mono">{record.fnd_cod || '-'}</td>
+                      <td className="py-2 pr-3 text-right font-mono tabular-nums">{record.tr_bpr}</td>
                       <td className="py-2 pr-3">
                         <div className="flex flex-col gap-1">
                           {statusBadge(record)}
@@ -127,7 +127,7 @@ export function PriceUploadDetailView({
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-2 text-xs text-[#555]">
                             <div>
                               <div className="text-[#999]">운용사코드</div>
-                              <div>{record.mgmt_com_cod || '-'}</div>
+                              <div className="font-mono">{record.mgmt_com_cod || '-'}</div>
                             </div>
                             <div>
                               <div className="text-[#999]">운용사명</div>
@@ -135,15 +135,15 @@ export function PriceUploadDetailView({
                             </div>
                             <div>
                               <div className="text-[#999]">과표기준가</div>
-                              <div>{record.tx_bpr}</div>
+                              <div className="font-mono tabular-nums">{record.tx_bpr}</div>
                             </div>
                             <div>
                               <div className="text-[#999]">해외비과세과표기준가</div>
-                              <div>{record.fr_tax_free_bpr}</div>
+                              <div className="font-mono tabular-nums">{record.fr_tax_free_bpr}</div>
                             </div>
                             <div>
                               <div className="text-[#999]">Full거래기준가</div>
-                              <div>{record.full_tr_bpr}</div>
+                              <div className="font-mono tabular-nums">{record.full_tr_bpr}</div>
                             </div>
                             <div>
                               <div className="text-[#999]">소득세법</div>

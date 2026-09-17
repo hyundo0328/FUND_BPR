@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { clsx } from 'clsx';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -239,11 +240,17 @@ export function PriceHistoryView({
             <thead>
               <tr className="border-b border-gray-200 text-left text-xs text-[#999]">
                 {COLUMNS.map((column) => (
-                  <th key={column.field} className="py-2 pr-3 font-medium">
+                  <th
+                    key={column.field}
+                    className={clsx('py-2 pr-3 font-medium', column.field === 'tr_bpr' && 'text-right')}
+                  >
                     <button
                       type="button"
                       onClick={() => handleSort(column.field)}
-                      className="flex items-center gap-1 hover:text-[#333]"
+                      className={clsx(
+                        'flex items-center gap-1 hover:text-[#333]',
+                        column.field === 'tr_bpr' && 'ml-auto',
+                      )}
                     >
                       {column.label}
                       {query.sort === column.field && <span>{query.order === 'asc' ? '▲' : '▼'}</span>}
@@ -256,10 +263,10 @@ export function PriceHistoryView({
             <tbody>
               {result.records.map((record) => (
                 <tr key={record.id} className="border-b border-gray-100">
-                  <td className="py-2 pr-3">{record.price_date}</td>
+                  <td className="py-2 pr-3 font-mono tabular-nums">{record.price_date}</td>
                   <td className="py-2 pr-3">{record.fnd_nm || '-'}</td>
-                  <td className="py-2 pr-3">{record.fnd_cod || '-'}</td>
-                  <td className="py-2 pr-3">{record.tr_bpr}</td>
+                  <td className="py-2 pr-3 font-mono">{record.fnd_cod || '-'}</td>
+                  <td className="py-2 pr-3 text-right font-mono tabular-nums">{record.tr_bpr}</td>
                   <td className="py-2 pr-3">{statusBadge(record.status)}</td>
                   <td className="py-2 pr-3">
                     <Link
