@@ -1,0 +1,7 @@
+.next/
+node_modules/
+data/
+.env.local
+.DS_Store
+*.tsbuildinfo
+.claude/scheduled_tasks.lock
