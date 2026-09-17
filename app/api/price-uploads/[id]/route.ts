@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDB } from '@/lib/db';
-import type { PriceRecord, PriceUpload } from '@/types';
+import { getUploadDetail } from '@/lib/priceRecords';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -11,18 +11,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 
   const db = getDB();
+  const detail = getUploadDetail(db, uploadId);
 
-  const upload = db.prepare('SELECT * FROM price_uploads WHERE id = ?').get(uploadId) as
-    | PriceUpload
-    | undefined;
-
-  if (!upload) {
+  if (!detail) {
     return NextResponse.json({ error: '업로드 내역을 찾을 수 없습니다.' }, { status: 404 });
   }
 
-  const records = db
-    .prepare('SELECT * FROM price_records WHERE upload_id = ? ORDER BY id ASC')
-    .all(uploadId) as PriceRecord[];
-
-  return NextResponse.json({ upload, records });
+  return NextResponse.json(detail);
 }

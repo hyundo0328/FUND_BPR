@@ -1,5 +1,6 @@
 import type Database from 'better-sqlite3';
 import type {
+  PriceRecord,
   PriceRecordListResponse,
   PriceRecordSortField,
   PriceRecordStatus,
@@ -76,6 +77,25 @@ export function getTodayPriceStatus(db: Database.Database): TodayPriceStatus {
   const status = counts.pending > 0 || counts.issue > 0 ? 'needs_review' : 'completed';
 
   return { status, upload, counts };
+}
+
+export function getUploadDetail(
+  db: Database.Database,
+  uploadId: number,
+): { upload: PriceUpload; records: PriceRecord[] } | null {
+  const upload = db.prepare('SELECT * FROM price_uploads WHERE id = ?').get(uploadId) as
+    | PriceUpload
+    | undefined;
+
+  if (!upload) {
+    return null;
+  }
+
+  const records = db
+    .prepare('SELECT * FROM price_records WHERE upload_id = ? ORDER BY id ASC')
+    .all(uploadId) as PriceRecord[];
+
+  return { upload, records };
 }
 
 const PRICE_RECORD_SORT_COLUMNS: Record<PriceRecordSortField, string> = {
