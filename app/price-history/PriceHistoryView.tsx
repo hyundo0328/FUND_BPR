@@ -31,7 +31,7 @@ const COLUMNS: { field: PriceRecordSortField; label: string }[] = [
 
 function statusBadge(status: PriceRecordStatus) {
   if (status === 'issue') {
-    return <Badge color="red">이상</Badge>;
+    return <Badge color="red">등록실패</Badge>;
   }
   if (status === 'registered') {
     return <Badge color="green">등록완료</Badge>;

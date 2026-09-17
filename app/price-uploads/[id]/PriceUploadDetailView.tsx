@@ -10,7 +10,7 @@ import type { PriceRecord, PriceUpload } from '@/types';
 
 function statusBadge(record: PriceRecord) {
   if (record.status === 'issue') {
-    return <Badge color="red">이상</Badge>;
+    return <Badge color="red">등록실패</Badge>;
   }
   if (record.status === 'registered') {
     return <Badge color="green">등록완료</Badge>;
@@ -68,7 +68,7 @@ export function PriceUploadDetailView({
               정상 <span className="font-semibold">{pendingCount}</span>건
             </span>
             <span>
-              이상 <span className="font-semibold text-red-600">{issueCount}</span>건
+              등록실패 <span className="font-semibold text-red-600">{issueCount}</span>건
             </span>
             <span>
               등록완료 <span className="font-semibold text-green-700">{registeredCount}</span>건

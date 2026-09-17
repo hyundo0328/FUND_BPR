@@ -54,7 +54,7 @@ function CountTiles({ counts }: { counts: PriceRecordStatusCounts }) {
   return (
     <div className="grid grid-cols-3 gap-3 border-t border-gray-100 pt-4">
       <StatTile label="정상" value={counts.pending} tone="neutral" />
-      <StatTile label="이상" value={counts.issue} tone="danger" />
+      <StatTile label="등록실패" value={counts.issue} tone="danger" />
       <StatTile label="등록완료" value={counts.registered} tone="success" />
     </div>
   );
@@ -99,7 +99,7 @@ export default function HomePage() {
               </StatusIcon>
               <div>
                 <div className="text-base font-semibold text-[#0a0a0a]">확인이나 등록이 남은 항목이 있습니다</div>
-                <div className="mt-0.5 text-sm text-[#999]">이상 건을 확인한 뒤 등록을 진행하세요.</div>
+                <div className="mt-0.5 text-sm text-[#999]">등록실패 건을 확인한 뒤 등록을 진행하세요.</div>
               </div>
             </div>
             <CountTiles counts={today.counts} />
